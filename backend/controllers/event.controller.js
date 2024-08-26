@@ -1,4 +1,5 @@
-const adminEventMap = require("../models/admin_event_map");
+const { default: mongoose } = require("mongoose");
+const AdminEventMap = require("../models/admin_event_map");
 const Event = require("../models/event");
 
 exports.list = async (req, res) => {
@@ -6,7 +7,7 @@ exports.list = async (req, res) => {
     let $and = [];
     const search = req.query.search;
     const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    const offset = req.query.offset ? parseInt(req.query.limit) : 0;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
 
     if (search && search.length > 0) {
       $and.push({
@@ -25,7 +26,7 @@ exports.list = async (req, res) => {
       .collation(collation)
       .skip(offset)
       .limit(limit);
-    console.log(data);
+
     const count = await Event.countDocuments(filter).exec();
 
     return res.status(200).json({
@@ -50,12 +51,91 @@ exports.userEvent = async (req, res) => {
   }
 };
 
-exports.adminList = async (req, res) => {
+
+exports.adminEventList = async (req, res) => {
   try {
+    const adminId = req.query.id;
+    const search = req.query.search || "";
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+
+    // Filter
+    const matchStage = { status: { $ne: 2 } };
+    if (search && search.length > 0) {
+      matchStage.$or = [
+        { name: new RegExp(search, "i") },
+        { location: new RegExp(search, "i") },
+      ];
+    }
+
+    const eventPipeline = [
+      {
+        $match: {
+          adminId: new mongoose.Types.ObjectId(adminId),
+          status: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "events",
+          localField: "eventId",
+          foreignField: "_id",
+          as: "event",
+          pipeline: [
+            {
+              $match: matchStage,
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: "$event",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          "event._id": { $exists: true },
+        },
+      },
+      {
+        $project: {
+          _id: "$event._id",
+          name: "$event.name",
+          detail: "$event.detail",
+          location: "$event.location",
+          status: "$event.status",
+          createdAt: "$event.createdAt",
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          count: [{ $count: "value" }],
+          data: [{ $skip: offset }, { $limit: limit }],
+        },
+      },
+    ];
+
+    const result = await AdminEventMap.aggregate(eventPipeline);
+
+    if (!result || !result[0] || result[0].data.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No events found", count: 0, data: [] });
+    }
+
+    const { count, data } = result[0];
+
+    return res.status(200).json({
+      count: count.length ? count[0].value : 0,
+      data: data,
+    });
   } catch (error) {
-    console.error(error.message);
+    console.error("Error fetching admin event list:", error.message);
     return res.status(500).json({
-      message: "An error occur while fetching admin list",
+      message: "An error occurred while fetching the admin event list.",
     });
   }
 };
@@ -74,7 +154,7 @@ exports.create = async (req, res) => {
 
     if (data._id) {
       const eventId = data._id;
-      const newAdminMap = new adminEventMap({
+      const newAdminMap = new AdminEventMap({
         adminId,
         eventId,
       });

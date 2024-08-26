@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get("/list", controller.list);
 router.get("/user-event", controller.userEvent);
-router.get("/admin-list", controller.adminList);
+router.get("/admin-event-list", controller.adminEventList);
 router.post("/create", controller.create);
 router.put("/update/:id", controller.update);
 router.patch("/delete/:id", controller.delete);
