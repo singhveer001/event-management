@@ -1,48 +1,89 @@
 const { default: mongoose } = require("mongoose");
 const AdminEventMap = require("../models/admin_event_map");
 const Event = require("../models/event");
+const userEventMap = require("../models/user_event_map");
 
-exports.list = async (req, res) => {
-  try {
-    let $and = [];
-    const search = req.query.search;
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
-
-    if (search && search.length > 0) {
-      $and.push({
-        $or: [
-          { name: new RegExp(search, "i") },
-          { location: new RegExp(search, "i") },
-        ],
-      });
-    }
-
-    const filter = $and.length > 0 ? { $and } : {};
-    const sort = { createdAt: -1 };
-    const collation = { locale: "en" };
-    const data = await Event.find(filter)
-      .sort(sort)
-      .collation(collation)
-      .skip(offset)
-      .limit(limit);
-
-    const count = await Event.countDocuments(filter).exec();
-
-    return res.status(200).json({
-      count: count ? count : 0,
-      data: data && data.length > 0 ? data : [],
-    });
-  } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({
-      message: "An error occur while fetching list",
-    });
-  }
-};
 
 exports.userEvent = async (req, res) => {
   try {
+    const eventId = req.query.id;
+    const search = req.query.search || "";
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+
+    // Filter
+    const matchStage = { status: { $ne: 2 } };
+    if (search && search.length > 0) {
+      matchStage.$or = [
+        { username: new RegExp(search, "i") },
+        { email: new RegExp(search, "i") },
+      ];
+    }
+
+    const userPipeline = [
+      {
+        $match: {
+          eventId : new mongoose.Types.ObjectId(eventId), 
+          status : 1
+        },
+      },
+      
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [
+            {
+              $match: matchStage,
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: "$user",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          "user._id": { $exists: true },
+        },
+      },
+      {
+        $project: {
+          _id: "$user._id",
+          name: "$user.username",
+          email: "$user.email",
+          status: "$user.status",
+          bookingTime: "$createdAt",
+        },
+      },
+      { $sort: { bookingTime: -1 } },
+      {
+        $facet: {
+          count: [{ $count: "value" }],
+          data: [{ $skip: offset }, { $limit: limit }],
+        },
+      },
+    ];
+
+    const result = await userEventMap.aggregate(userPipeline);
+
+    if (!result || !result[0] || result[0].data.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No events found", count: 0, data: [] });
+    }
+
+    const { count, data } = result[0];
+
+    return res.status(200).json({
+      count: count.length ? count[0].value : 0,
+      data: data,
+    });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({

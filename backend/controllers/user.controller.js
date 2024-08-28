@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Event = require("../models/event");
+const UserEventMap = require("../models/user_event_map");
 
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
@@ -12,10 +14,7 @@ exports.signIn = async (req, res) => {
       });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      existingUser.password
-    );
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
     if (!passwordMatch) {
       return res.status(400).json({
         message: "Invalid credantial",
@@ -23,7 +22,7 @@ exports.signIn = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { adminId: existingUser._id },
+      { userId: existingUser._id },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "7d" }
     );
@@ -67,7 +66,7 @@ exports.signUp = async (req, res) => {
 
     // generate a jwt token and send it as a response
     const token = jwt.sign(
-      { adminId: newUser._id },
+      { userId: newUser._id },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "7d" }
     );
@@ -86,6 +85,45 @@ exports.signUp = async (req, res) => {
     console.error(error.message);
     return res.status(500).json({
       message: "An error occur while signup",
+    });
+  }
+};
+
+exports.eventList = async (req, res) => {
+  try {
+    let $and = [];
+    const search = req.query.search;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+
+    if (search && search.length > 0) {
+      $and.push({
+        $or: [
+          { name: new RegExp(search, "i") },
+          { location: new RegExp(search, "i") },
+        ],
+      });
+    }
+
+    const filter = $and.length > 0 ? { $and } : {};
+    const sort = { createdAt: -1 };
+    const collation = { locale: "en" };
+    const data = await Event.find(filter)
+      .sort(sort)
+      .collation(collation)
+      .skip(offset)
+      .limit(limit);
+
+    const count = await Event.countDocuments(filter).exec();
+
+    return res.status(200).json({
+      count: count ? count : 0,
+      data: data && data.length > 0 ? data : [],
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({
+      message: "An error occur while fetching list",
     });
   }
 };
@@ -145,15 +183,23 @@ exports.permanentDelete = async (req, res) => {
   }
 };
 
+exports.bookEvent = async (req, res) => {
+  try {
+    const { userId, eventId } = req.body;
+    const bookEvent = new UserEventMap({
+      userId,
+      eventId,
+    });
 
+    await bookEvent.save();
 
-exports.bookEvent = async (req, res) =>{
-    try {
-        
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({
-            message: "An error occur while User booking event"
-        })
-    }
-}
+    return res.status(200).json({
+      message: "Event book successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({
+      message: "An error occur while User booking event",
+    });
+  }
+};
