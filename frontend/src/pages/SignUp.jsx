@@ -16,17 +16,28 @@ const SignUp = () => {
   const handleSubmit = async () => {
     try {
       const payload = { username, email, password };
+      let res;
       if (parseInt(option) === 1) {
-        const res = await adminSignup(payload);
-      } else if (parseInt(option) == 2) {
-        const res = await userSignup(payload);
+        res = await adminSignup(payload);
+      } else if (parseInt(option) === 2) {
+        res = await userSignup(payload);
+      }
+  
+      const token = res.data.token ; 
+      const session = JSON.stringify(res.data.session);
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("session", session);
+      } else {
+        console.error("Token not found in response.");
       }
     } catch (error) {
-      res.error("Error:", error.message);
+      console.error("Error:", error.message);
     } finally {
       setBtnLoad(false);
     }
   };
+  
 
   return (
     <div className="bg-gray-400 flex h-screen justify-center">
