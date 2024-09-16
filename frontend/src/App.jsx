@@ -7,17 +7,18 @@ import UserRoute from "./routes/UserRoute";
 import PageNotFound from "./pages/PageNotFound";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
+import Events from "./pages/user/Events";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />     
+          <Route path="/event-list" element={<Events/>} />     
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/signin" element={<SignIn/>} />
           <Route path="/admin/*" element={<AdminRoute />} />
-          <Route path="/user/*" element={<UserRoute />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>
