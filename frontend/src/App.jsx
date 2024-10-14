@@ -8,6 +8,7 @@ import PageNotFound from "./pages/PageNotFound";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Events from "./pages/user/Events";
+import UserParticipants from "./pages/user/UserParticipants";
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />     
-          <Route path="/event-list" element={<Events/>} />     
+          <Route path="/event-list" element={<Events/>} />   
+          <Route path="/user-participants" element={<UserParticipants/>} />  
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/signin" element={<SignIn/>} />
           <Route path="/admin/*" element={<AdminRoute />} />

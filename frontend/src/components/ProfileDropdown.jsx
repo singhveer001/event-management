@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -11,18 +13,33 @@ const ProfileDropdown = () => {
     setIsOpen(false);
   };
 
+  // Close the menu if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left" ref={dropdownRef}>
       <div>
         <button
           type="button"
-          className="flex w-full items-center	 justify-center gap-x-1.5 rounded-xl bg-white pl-3 rounded-r-3xl 	 text-sm font-semibold text-gray-900 shadow-sm  ring-inset ring-gray-500 hover:bg-gray-50"
+          className="flex w-full items-center justify-center gap-x-1.5 rounded-xl bg-white pl-3 rounded-r-3xl text-sm font-semibold text-gray-900 shadow-sm ring-inset ring-gray-500 hover:bg-gray-50"
           id="menu-button"
           aria-expanded={isOpen}
           aria-haspopup="true"
           onClick={toggleMenu}
         >
-          <span className="p-1 text-base  font-normal		">Veerbhan Singh</span>
+          <span className="p-1 text-base font-normal">Veerbhan Singh</span>
           <div className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100">
             <span className="font-medium text-lg">VB</span>
           </div>
@@ -59,7 +76,8 @@ const ProfileDropdown = () => {
               Account settings
             </a>
 
-            <a
+            <Link
+              to={"/user-participants"}
               href="#"
               className="block px-4 py-2 text-sm text-gray-700"
               role="menuitem"
@@ -67,8 +85,8 @@ const ProfileDropdown = () => {
               id="menu-item-0"
               onClick={closeMenu}
             >
-              User Participents
-            </a>
+              User Participants
+            </Link>
 
             <form method="POST" action="#" role="none">
               <button

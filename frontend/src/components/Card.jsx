@@ -11,7 +11,7 @@ const Card = (props) => {
         />
       </div>
       <div className="px-6 py-2">
-        <div className="font-bold text-xl mb-2">UI/UX Event</div>
+        <div className="font-bold text-xl mb-2">{props.eventName}</div>
         <p className="text-gray-700 text-base">{props.details}</p>
       </div>
       <div className="px-6 py-2">
