@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { FaEdit } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const EventCard = (props) => {
   return (
@@ -11,9 +12,9 @@ const EventCard = (props) => {
           src={props.src}
           alt={props.eventName || "Event Image"}
         />
-        <button className="absolute top-2 right-2 rounded-full p-1 shadow bg-slate-100 hover:bg-gray-200">
+        <Link className="absolute top-2 right-2 rounded-full p-1 shadow bg-slate-100 hover:bg-gray-200" to={props.to}>
           <FaEdit className="h-5 w-5" />
-        </button>
+        </Link>
       </div>
       <div className="px-6 py-2">
         <div className="font-bold text-xl mb-2">{props.eventName}</div>

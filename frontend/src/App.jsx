@@ -15,6 +15,7 @@ import AdminEventList from "./pages/admin/AdminEventList";
 import CreateEvent from "./pages/admin/CreateEvent";
 import Profile from "./pages/admin/Profile";
 import AccountSetting from "./pages/admin/AcountSetting";
+import EditEvent from "./pages/admin/EditEvent";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
              <Route index element={<Dashboard/>}/>
              <Route path="admin-event-list" element={<AdminEventList/>}/>
              <Route path="create-event" element={<CreateEvent/>}/>
+             <Route path="edit-event" element={<EditEvent/>}/>
              <Route path="profile" element={<Profile/>}/>
              <Route path="setting" element={<AccountSetting/>}/>
           </Route> 

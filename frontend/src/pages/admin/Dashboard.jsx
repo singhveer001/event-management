@@ -23,30 +23,38 @@ const Dashboard = () => {
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
+
         />
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
         />
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
         />
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
         />
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
         />
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
         />
         <EventCard
           src="https://images.pexels.com/photos/27495515/pexels-photo-27495515/free-photo-of-a-woman-in-a-white-dress-walking-in-front-of-hot-air-balloons.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load" 
           eventName="UI/UX EVENT"
+          to={"/dashboard/edit-event"}
         />
       </div>
     </div>
