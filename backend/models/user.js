@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      default: 'https://thumbs.dreamstime.com/b/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available-235041328.jpg' // Placeholder image
+    },
     password: {
       type: String,
       required: true,

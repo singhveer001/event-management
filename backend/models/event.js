@@ -6,11 +6,19 @@ const eventSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      default: 'https://thumbs.dreamstime.com/b/default-image-icon-vector-missing-picture-page-website-design-mobile-app-no-photo-available-235041328.jpg' // Placeholder image
+    },
     location: {
       type: String,
       required: true,
     },
     detail: {
+      type: String,
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },

@@ -93,20 +93,40 @@ exports.signUp = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
-    const { username } = req.body;
+    const { username, address, about } = req.body;
+
+    // Build the update object
+    let updateFields = { username, address, about };
+
+    // Check if an image file was uploaded
+    if (req.file) {
+      updateFields.image = `${process.env.BASE_URL}/uploads/admin/${req.file.filename}`;
+    }
+    
+
+    // Update the Admin document in the database
     const updateAdmin = await Admin.findByIdAndUpdate(
       id,
-      { username },
+      updateFields,
       { new: true }
     );
+
+    // If admin not found
+    if (!updateAdmin) {
+      return res.status(404).json({
+        message: "Admin not found",
+      });
+    }
+
+    // Return a success response
     return res.status(200).json({
-      message: "Username Updated",
+      message: "Your data has been updated",
       data: updateAdmin,
     });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({
-      message: "An error occur while updating",
+      message: "An error occurred while updating",
     });
   }
 };

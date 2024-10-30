@@ -3,7 +3,6 @@ const AdminEventMap = require("../models/admin_event_map");
 const Event = require("../models/event");
 const userEventMap = require("../models/user_event_map");
 
-
 exports.userEvent = async (req, res) => {
   try {
     const eventId = req.query.id;
@@ -23,11 +22,11 @@ exports.userEvent = async (req, res) => {
     const userPipeline = [
       {
         $match: {
-          eventId : new mongoose.Types.ObjectId(eventId), 
-          status : 1
+          eventId: new mongoose.Types.ObjectId(eventId),
+          status: 1,
         },
       },
-      
+
       {
         $lookup: {
           from: "users",
@@ -91,7 +90,6 @@ exports.userEvent = async (req, res) => {
     });
   }
 };
-
 
 exports.adminEventList = async (req, res) => {
   try {
@@ -182,21 +180,24 @@ exports.adminEventList = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { name, location, detail, date, adminId } = req.body;
   try {
-    const newEvent = new Event({
-      name,
-      location,
-      detail,
-      date,
-    });
+    const data = req.body && req.body.data ? JSON.parse(req.body.data) : {};
+  
+    // Initialize updateFields inside the try block
+    let updateFields = { ...data };
 
-    const data = await newEvent.save();
+    if (req.file) {
+      updateFields.image = `${process.env.BASE_URL}/uploads/admin/${req.file.filename}`;
+    }
 
-    if (data._id) {
-      const eventId = data._id;
+    const newEvent = new Event({...updateFields});
+
+    const response = await newEvent.save();
+
+    if (response._id) {
+      const eventId = response._id;
       const newAdminMap = new AdminEventMap({
-        adminId,
+        adminId : updateFields.adminId,
         eventId,
       });
       await newAdminMap.save();
@@ -204,25 +205,29 @@ exports.create = async (req, res) => {
 
     return res.status(200).json({
       message: "Event created successfully",
-      data: data,
+      data:response,
     });
   } catch (error) {
-    console.error(error.message);
+    console.error("Error Creating Event:", error.message);
     return res.status(500).json({
-      message: "An error occur while creating event",
+      message: "An error occurred while creating the event",
     });
   }
 };
 
 exports.update = async (req, res) => {
-  const { name, location, detail, date } = req.body;
+  const { name, location, detail, date, description } = req.body;
   try {
     const eventId = req.params.id;
-    const updateEvent = await Event.findByIdAndUpdate(
-      eventId,
-      { name, location, date, detail },
-      { new: true }
-    );
+
+    let updateFields = { name, location, date, detail, description };
+    if (req.file) {
+      updateFields.image = `${process.env.BASE_URL}/uploads/admin/${req.file.filename}`;
+    }
+
+    const updateEvent = await Event.findByIdAndUpdate(eventId, updateFields, {
+      new: true,
+    });
 
     if (!updateEvent) {
       return res.status(404).json({
@@ -231,7 +236,7 @@ exports.update = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "Event Updated Successfully    ",
+      message: "Event Updated Successfully ",
       data: updateEvent,
     });
   } catch (error) {

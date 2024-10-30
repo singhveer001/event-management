@@ -131,10 +131,19 @@ exports.eventList = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const id = req.params.id;
-    const { username } = req.body;
+    const data = req.body && req.body.data ? JSON.parse(req.body.data) : {};
+    let updateFields = { username: data.username };
+    console.log(req.body);
+    console.log(data);  
+
+    // Check if an image file was uploaded
+    if (req.file) {
+      updateFields.image = `${process.env.BASE_URL}/uploads/admin/${req.file.filename}`;
+    }
+    console.log(req.file);
     const updateUser = await User.findByIdAndUpdate(
       id,
-      { username },
+      { ...updateFields },
       { new: true }
     );
     return res.status(200).json({
