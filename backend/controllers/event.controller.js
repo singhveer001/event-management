@@ -3,7 +3,7 @@ const AdminEventMap = require("../models/admin_event_map");
 const Event = require("../models/event");
 const userEventMap = require("../models/user_event_map");
 
-exports.userEvent = async (req, res) => {
+exports.eventParticipants = async (req, res) => {
   try {
     const eventId = req.query.id;
     const search = req.query.search || "";
@@ -178,6 +178,52 @@ exports.adminEventList = async (req, res) => {
     });
   }
 };
+
+exports.userEventList = async (req,res) => {
+  try {
+    const userId = req.userId;
+    const userEvents = await userEventMap.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $lookup: {
+          from: "events",
+          localField: "eventId",
+          foreignField: "_id",
+          as: "events"
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: 1,
+          events: {
+            $arrayElemAt: ["$events", 0]
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          bookedEvents: {
+            $push: "$events"
+          }
+        }
+      }
+    ])
+    res.status(200).json({
+      Events : userEvents[0].bookedEvents
+    })
+  } catch (error) {
+    console.log("Error fetching userEventList",error)
+    res.status(500).json({
+      message : "An error occured fetching user event list"
+    })
+  }
+}
 
 exports.create = async (req, res) => {
   try {

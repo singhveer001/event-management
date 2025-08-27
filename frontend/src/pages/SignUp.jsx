@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import InputBox from "../components/InputBox";
 import { Button } from "../components/Button";
 import Option from "../components/Option";
-import axios from "axios";
 import { adminSignup } from "../api/Admin";
 import { userSignup } from "../api/User";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [option, setOption] = useState("");
-  const [btnLoad, setBtnLoad] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
@@ -28,13 +28,12 @@ const SignUp = () => {
       if (token) {
         localStorage.setItem("token", token);
         localStorage.setItem("session", session);
+        option == "1" ? navigate('/dashboard') : navigate('/')
       } else {
         console.error("Token not found in response.");
       }
     } catch (error) {
       console.error("Error:", error.message);
-    } finally {
-      setBtnLoad(false);
     }
   };
   
@@ -80,10 +79,10 @@ const SignUp = () => {
           <div className="pt-4">
             <Button
               onClick={() => {
-                setBtnLoad(true); 
-                handleSubmit();
+                handleSubmit
               }}
               label={"Submit"}
+              disable={!username || !email || !password || !option}
             />
           </div>
         </div>

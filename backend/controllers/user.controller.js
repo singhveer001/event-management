@@ -28,6 +28,7 @@ exports.signIn = async (req, res) => {
     );
 
     const session = {
+      id: existingUser._id,
       username: existingUser.username,
       email: existingUser.email,
     };
@@ -72,6 +73,7 @@ exports.signUp = async (req, res) => {
     );
 
     const session = {
+      id: existingUser._id,
       username: newUser.username,
       email: newUser.email,
     };

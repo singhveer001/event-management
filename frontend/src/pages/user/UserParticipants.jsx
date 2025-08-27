@@ -1,8 +1,20 @@
 import React from "react";
 import Navbar from "../../components/Navbar";
 import EventsCard from "../../components/EventsCard";
+import { userBookedEvent } from "../../api/User";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const UserParticipants = () => {
+  const [userEvents, setUserEvents] = useState([]);
+  
+  useEffect(() => {
+    userBookedEvent().then((res) => {
+      setUserEvents(res)
+    })
+
+  },[])
+
   return (
     <div className="bg-slate-200 min-h-screen flex flex-col">
       <Navbar />
@@ -12,24 +24,17 @@ const UserParticipants = () => {
             </h2>
           </div>
       <div className="flex-grow mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-56 my-8">
-      <EventsCard 
-            eventName={"Hello from India"}
-            details={`Personal trainer, nutritionist and wellness coach Rachael Sacerdoti
-            shares how she stays feeling her best, even when motivation slips.`}
-            btnName={"Booked"}
-        />
-        <EventsCard 
-            eventName={"Hello from India"}
-            details={`Personal trainer, nutritionist and wellness coach Rachael Sacerdoti
-            shares how she stays feeling her best, even when motivation slips.`}
-            btnName={"Booked"}
-        />
-        <EventsCard 
-            eventName={"Hello from India"}
-            details={`Personal trainer, nutritionist and wellness coach Rachael Sacerdoti
-            shares how she stays feeling her best, even when motivation slips.`}
-            btnName={"Booked"}
-        />
+        {
+          userEvents.map((res) => {
+            return <EventsCard 
+                key={res._id}
+                eventName={res.name}
+                details={res.detail}
+                imgUrl= {res.image}
+                btnName={"Booked"}
+            />
+          })
+        }
       </div>
     </div>
   );

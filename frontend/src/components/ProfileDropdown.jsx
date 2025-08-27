@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-
+  const userData = JSON.parse(localStorage.getItem("session"));
+  const navigate = useNavigate();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -28,6 +29,12 @@ const ProfileDropdown = () => {
     };
   }, []);
 
+  function logOut(){
+    localStorage.removeItem("token");
+    localStorage.removeItem("session");
+    navigate('/signin');
+  }
+
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <div>
@@ -39,9 +46,9 @@ const ProfileDropdown = () => {
           aria-haspopup="true"
           onClick={toggleMenu}
         >
-          <span className="p-1 text-base font-normal">Veerbhan Singh</span>
+          <span className="p-1 text-base font-normal">{userData.username}</span>
           <div className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100">
-            <span className="font-medium text-lg">VB</span>
+            <span className="font-medium text-lg">{userData.username.charAt(0)}</span>
           </div>
         </button>
       </div>
@@ -56,11 +63,11 @@ const ProfileDropdown = () => {
         >
           <div className="flex gap-4 px-4 py-2 text-sm text-gray-700 border-b-2">
             <div className="flex items-center justify-center w-11 h-11 bg-slate-300 font-medium text-lg">
-              VB
+              {userData.username.charAt(0)}
             </div>
             <div className="flex flex-col justify-center">
-              <div className="text-base font-medium">Veerbhan Singh</div>
-              <div>Veerbhan@gmail.com</div>
+              <div className="text-base font-medium">{userData.username}</div>
+              <div>{userData.email}</div>
             </div>
           </div>
 
@@ -78,7 +85,6 @@ const ProfileDropdown = () => {
 
             <Link
               to={"/user-participants"}
-              href="#"
               className="block px-4 py-2 text-sm text-gray-700"
               role="menuitem"
               tabIndex="-1"
@@ -88,18 +94,16 @@ const ProfileDropdown = () => {
               User Participants
             </Link>
 
-            <form method="POST" action="#" role="none">
               <button
                 type="submit"
                 className="block w-full px-4 py-2 text-left text-sm text-gray-700"
                 role="menuitem"
                 tabIndex="-1"
                 id="menu-item-2"
-                onClick={closeMenu}
+                onClick={logOut}
               >
                 Sign out
               </button>
-            </form>
           </div>
         </div>
       )}

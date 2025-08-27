@@ -5,5 +5,8 @@ export const adminSignup = async (body) => {
     return response
 }
 
-
+export const adminSignin = async (body) => {
+    const response = await axios.post("http://localhost:5000/api/admin/signin", body);
+    return response
+}
 
