@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import EventsCard from "../../components/EventsCard";
 import { allEvent, bookEvent } from "../../api/User";
+import { useNavigate } from "react-router-dom";
 
 const Events = () => {
-
   const [events, setEvents] = useState([]);
+  const navigate = useNavigate();
+  
   useEffect(() => {
     allEvent({search:"", limit:10, offset:10})
       .then((res) => {
@@ -14,7 +16,12 @@ const Events = () => {
   },[])
 
   function handleBookEvent(eventId){
-    bookEvent(eventId);
+    const token = localStorage.getItem('token');
+    if(token !== null){
+      bookEvent(eventId);
+    }else{
+      navigate('/signin')
+    }
   }
 
   return (

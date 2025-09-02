@@ -10,12 +10,8 @@ export const userSignin = async (body) => {
 }
 
 export const allEvent = async ({search="", limit=10, offset=10}) => {
-        const token = localStorage.getItem('token');
         const response = await axios.get("http://localhost:5000/api/user/event-list", {
-            params : {search, limit, offset},
-            headers: {
-                Authorization : `Bearer ${token}`
-            }
+            params : {search, limit, offset}
         })
         return response.data;
 }

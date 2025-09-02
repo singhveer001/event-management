@@ -6,7 +6,7 @@ const uploadFile = require("../middleware/uploadFile.middleware");
 
 router.post("/signin", controller.signIn);
 router.post("/signup", controller.signUp);
-router.get("/event-list", userAuthMiddleware(controller.eventList));
+router.get("/event-list",controller.eventList);
 router.post("/book-event", userAuthMiddleware(controller.bookEvent));
 router.put("/update/:id",uploadFile("user"), userAuthMiddleware(controller.update));
 router.patch("/delete/:id", userAuthMiddleware(controller.delete));
