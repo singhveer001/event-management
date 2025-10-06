@@ -66,7 +66,6 @@ exports.signUp = async (req, res) => {
 
     await newUser.save();
 
-    // generate a jwt token and send it as a response
     const token = jwt.sign(
       { adminId: newUser._id },
       process.env.JWT_SECRET_KEY,
@@ -97,7 +96,6 @@ exports.update = async (req, res) => {
     const id = req.params.id;
     const { username, address, about } = req.body;
 
-    // Build the update object
     let updateFields = { username, address, about };
 
     // Check if an image file was uploaded
@@ -105,22 +103,18 @@ exports.update = async (req, res) => {
       updateFields.image = `${process.env.BASE_URL}/uploads/admin/${req.file.filename}`;
     }
     
-
-    // Update the Admin document in the database
     const updateAdmin = await Admin.findByIdAndUpdate(
       id,
       updateFields,
       { new: true }
     );
 
-    // If admin not found
     if (!updateAdmin) {
       return res.status(404).json({
         message: "Admin not found",
       });
     }
 
-    // Return a success response
     return res.status(200).json({
       message: "Your data has been updated",
       data: updateAdmin,

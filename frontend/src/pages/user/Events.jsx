@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 const Events = () => {
   const [events, setEvents] = useState([]);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    allEvent({search:"", limit:10, offset:10})
+    allEvent({search:"", limit:10, offset:0})
       .then((res) => {
         setEvents(res.data);
       })

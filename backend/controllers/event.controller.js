@@ -93,7 +93,7 @@ exports.eventParticipants = async (req, res) => {
 
 exports.adminEventList = async (req, res) => {
   try {
-    const adminId = req.query.id;
+    const adminId = req.adminId;
     const search = req.query.search || "";
     const limit = req.query.limit ? parseInt(req.query.limit) : 10;
     const offset = req.query.offset ? parseInt(req.query.offset) : 0;
@@ -146,6 +146,8 @@ exports.adminEventList = async (req, res) => {
           location: "$event.location",
           status: "$event.status",
           createdAt: "$event.createdAt",
+          date: "$event.date",
+          image: "$event.image"
         },
       },
       { $sort: { createdAt: -1 } },
@@ -233,7 +235,7 @@ exports.create = async (req, res) => {
     let updateFields = { ...data };
 
     if (req.file) {
-      updateFields.image = `${process.env.BASE_URL}/uploads/admin/${req.file.filename}`;
+      updateFields.image = `${process.env.BASE_URL}/uploads/event/${req.file.filename}`;
     }
 
     const newEvent = new Event({...updateFields});
@@ -243,7 +245,7 @@ exports.create = async (req, res) => {
     if (response._id) {
       const eventId = response._id;
       const newAdminMap = new AdminEventMap({
-        adminId : updateFields.adminId,
+        adminId : req.adminId,
         eventId,
       });
       await newAdminMap.save();

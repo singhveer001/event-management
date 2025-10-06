@@ -9,7 +9,7 @@ export const userSignin = async (body) => {
     return response;
 }
 
-export const allEvent = async ({search="", limit=10, offset=10}) => {
+export const allEvent = async ({search="", limit=10, offset=0}) => {
         const response = await axios.get("http://localhost:5000/api/user/event-list", {
             params : {search, limit, offset}
         })

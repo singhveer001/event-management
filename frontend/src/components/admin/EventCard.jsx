@@ -18,8 +18,8 @@ const EventCard = (props) => {
       </div>
       <div className="px-6 py-2">
         <div className="font-bold text-xl mb-2">{props.eventName}</div>
-        <p className="text-gray-700 text-base">{props.details}</p>
-        <p className="text-gray-400 text-sm">Aug 20, 2024</p>
+        {/* <p className="text-gray-700 text-base">{props.details}</p> */}
+        <p className="text-gray-400 text-sm">{new Date(props.eventDate).toLocaleDateString("en-CA")}</p>
       </div>
     </div>
   );
