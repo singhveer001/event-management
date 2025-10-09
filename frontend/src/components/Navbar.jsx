@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const Navbar = () => {
   const [isLogin, setIsLogin] = useState(false);
   useEffect(()=>{
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('userToken');
     if(token){
       setIsLogin(true);
     }

@@ -26,9 +26,16 @@ const SignIn = () => {
       const token = res.data.token;
       const session = JSON.stringify(res.data.session);
       if(token){
-        localStorage.setItem("token",token);
-        localStorage.setItem("session",session)
-        option == "1" ? navigate('/dashboard') : navigate('/')
+        if(option == "1"){
+          localStorage.setItem("adminToken",token);
+          localStorage.setItem("adminSession",session)
+          navigate('/dashboard')
+        }
+        else{
+          localStorage.setItem("userToken",token);
+          localStorage.setItem("userSession",session)
+          navigate('/')
+        }
       }
       else{
         console.error("Token not found in response");

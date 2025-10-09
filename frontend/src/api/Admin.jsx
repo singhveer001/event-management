@@ -11,7 +11,7 @@ export const adminSignin = async (body) => {
 }
 
 export const useAdminEventList = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
     const [data,setData] = useState({events:[], loading: true, error: ''});
     useEffect( () => {
         const fetchData = async () => {
@@ -32,7 +32,7 @@ export const useAdminEventList = () => {
 };
 
 export const createEvent = async (body) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
     const formData = new FormData();
     formData.append("data",JSON.stringify({
         name : body.eventTitle,

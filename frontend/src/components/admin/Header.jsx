@@ -3,12 +3,12 @@ import { useState } from 'react';
 import Dropdown from './Dropdown';
 
 const Header = () => {
-    
+  const username = JSON.parse(localStorage.getItem("adminSession"))?.username;
   return( 
     <div className='flex justify-between item-center p-4'>
         <div>
             <h1 className='text-xs'>Welcome Back!</h1>
-            <p className='text-xl font-semibold'>Veerbhan</p>
+            <p className='text-xl font-semibold'>{username}</p>
         </div>
         <div className='flex items-center space-x-5'>
             <div className='hidden md:flex '>

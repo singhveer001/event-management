@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const userData = JSON.parse(localStorage.getItem("session"));
+  const userData = JSON.parse(localStorage.getItem("userSession"));
   const navigate = useNavigate();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -30,8 +30,8 @@ const ProfileDropdown = () => {
   }, []);
 
   function logOut(){
-    localStorage.removeItem("token");
-    localStorage.removeItem("session");
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userSession");
     navigate('/signin');
   }
 

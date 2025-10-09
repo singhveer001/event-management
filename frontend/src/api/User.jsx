@@ -17,8 +17,8 @@ export const allEvent = async ({search="", limit=10, offset=0}) => {
 }
 
 export const bookEvent = async (eventId) => {
-    const token = localStorage.getItem('token');
-    const userid = JSON.parse(localStorage.getItem('session')).id;
+    const token = localStorage.getItem('userToken');
+    const userid = JSON.parse(localStorage.getItem('userSession')).id;
     console.log(userid)
     const response = await axios.post("http://localhost:5000/api/user/book-event",
         {
@@ -31,7 +31,7 @@ export const bookEvent = async (eventId) => {
 }
 
 export const userBookedEvent = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
     const response = await axios.get("http://localhost:5000/api/events/user-booked-events",{
         headers:{
             Authorization : `Bearer ${token}`

@@ -32,6 +32,7 @@ const UserParticipants = () => {
                 details={res.detail}
                 imgUrl= {res.image}
                 btnName={"Booked"}
+                disabled={true}
             />
           })
         }

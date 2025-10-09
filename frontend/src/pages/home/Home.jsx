@@ -2,20 +2,50 @@ import React from "react";
 import Navbar from "../../components/Navbar";
 import Section from "../../components/Section";
 import Card from "../../components/Card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
-import { allEvent } from "../../api/User";
+import { allEvent, bookEvent, userBookedEvent } from "../../api/User";
 
 const Home = () => {
 
   const [events, setEvents] = useState([]);
+  const [bookedEvent, setBookedEvent] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     allEvent({limit:8, offSet:0})
       .then((res) => {
         setEvents(res.data)
       })
   },[])
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if(token){
+      userBookedEvent().then((res) => {
+        setBookedEvent(res);
+      })
+    }
+  },[])
+
+  const handleBookEvent = async (eventId) => {
+    const token = localStorage.getItem("userToken");
+    if(!token){
+      navigate('/signin')
+      return;
+    }
+
+    try {
+      await bookEvent(eventId);
+      setBookedEvent((prev) => [...prev, {_id: eventId}] )
+    } catch (error) {
+      console.error(error);
+    }
+  } 
+
+  const isEventBooked = (eventId) => {
+    return bookedEvent.some( (event) => event._id === eventId)
+  }
 
   return (
     <div className="overflow-x-hidden">
@@ -44,11 +74,16 @@ const Home = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {
               events.map((data) => {
+                const booked = isEventBooked(data._id);
                 return <Card
+                  const 
                   key={data._id}
                   eventName={data.name}
                   details={data.detail}
                   src={data.image}
+                  onClick={() => !booked && handleBookEvent(data._id)}
+                  disabled={booked}
+                  text = {booked ? "Booked" : "Book Now"}
                 />
               })
             }

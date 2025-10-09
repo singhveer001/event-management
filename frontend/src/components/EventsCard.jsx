@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 
-const EventsCard = ({eventName,details,btnName,imgUrl,onClick}) => {
+const EventsCard = ({eventName,details,btnName,imgUrl,onClick, disabled}) => {
   return (
     <div className="px-4 py-6 bg-slate-50 flex flex-col md:flex-row justify-between gap-8 w-full h-auto rounded-md mb-10">
 
@@ -22,8 +22,8 @@ const EventsCard = ({eventName,details,btnName,imgUrl,onClick}) => {
               {details}
           </p>
         </div>
-        <div className="w-full md:w-40">
-          <Button onClick={onClick} label={btnName} />
+        <div className="w-full md:w-40 ">
+          <Button onClick={onClick} label={btnName} disabled={disabled} />
         </div>
       </div>
     </div>
